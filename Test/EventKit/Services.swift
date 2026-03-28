@@ -36,8 +36,9 @@ final class AppSettings {
   
   private init() {}
   
+  // связь с settingsManager через вычисляемые свойства
   var synchronizeCalendar: Bool = false
-  var calendarMetadata: [String: Any]?
+  var selectedCalendar: CalendarItem?
 }
 
 
@@ -93,6 +94,14 @@ final class CalendarService {
   
   private(set) var availableCalendars: [CalendarItem] = []
   private var calendarChangeObserver: Any?
+  
+  // Выборка календарей
+  var defaultCalendar: EKCalendar? {
+    eventStore.defaultCalendarForNewEvents
+  }
+  var anyCalendar: EKCalendar? {
+    eventStore.calendars(for: .event).first
+  }
   
   init(eventStore: EKEventStore) {
     self.eventStore = eventStore
@@ -161,6 +170,14 @@ final class CalendarService {
     } else {
       print("Calendar was not created")
     }
+  }
+  
+  // MARK: - Calendar Selecting
+  
+  func findCalendar(with id: String) -> EKCalendar? {
+    let selectedCalendar = eventStore.calendar(withIdentifier: id)
+    
+    return selectedCalendar
   }
 }
 
@@ -261,6 +278,25 @@ final class SettingsTabViewModel {
   
   // MARK: - Calendar Selection
   
+  var pickedCalendarID: String {
+    get {
+      appSettings.selectedCalendar?.id ?? ""
+    }
+    set {
+      selectCalendar(with: newValue)
+    }
+  }
+  var selectedCalendarItem: CalendarItem {
+    guard let selectedCalendar = appSettings.selectedCalendar else {
+      return CalendarItem(from: calendarService.defaultCalendar!)
+    }
+    return selectedCalendar
+  }
+  
+  func selectCalendar(with id: String) {
+    let selectedCalendar = calendarService.findCalendar(with: id)
+    appSettings.selectedCalendar = CalendarItem(from: selectedCalendar)
+  }
   
   
   // MARK: - Sync Toggle Logic
@@ -311,12 +347,12 @@ struct CalendarItem: Identifiable {
   let id: String
   let color: CGColor
   let title: String
-  let sourceType: EKSourceType
+  let source: EKSource
   
   init(from ekCalendar: EKCalendar) {
     self.id = ekCalendar.calendarIdentifier
     self.color = ekCalendar.cgColor
     self.title = ekCalendar.title
-    self.sourceType = ekCalendar.source.sourceType
+    self.source = ekCalendar.source
   }
 }

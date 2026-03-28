@@ -48,18 +48,21 @@ struct EventView: View {
               viewModel.isCalendarSelected = true
             }, label: {
               HStack(spacing: 10) {
+                // TODO: [BUG] После выбора календаря, 2 итерации "выкл->вкл" на мгновение появляется прошлый выбранный календарь
                 Text("Календарь")
                 Spacer()
                 Circle()
                   .frame(width: 20, height: 20)
-                  .foregroundStyle(Color.purple)
-                Text("TITLE")
+                  .foregroundStyle(Color(cgColor: viewModel.selectedCalendarItem.color))
+                Text(viewModel.selectedCalendarItem.title)
               }
+              .animation(.easeInOut(duration: 0.3), value: viewModel.selectedCalendarItem.id)
             })
             .tint(.primary)
           }
         }
       }
+      .animation(.snappy, value: viewModel.isSynchronizeOn)
     }
     .alert("Нет доступа к календарю",
            isPresented: $viewModel.isAlertPresent,
@@ -81,7 +84,6 @@ struct EventView: View {
         .presentationDragIndicator(.visible)
         .presentationDetents([.medium, .large])
     }
-    // TODO: При закрытии должен открываться выбор календаря
     .sheet(
       isPresented: $viewModel.isCalendarCreated,
       onDismiss: viewModel.onDismissCalendarCreated
@@ -100,9 +102,7 @@ struct EventView: View {
 
 struct CalendarsSheetView: View {
   @Bindable var viewModel: SettingsTabViewModel
-  
-  @State var selected: String = ""
-  
+    
   var body: some View {
     List {
       // Кнопка добавления календаря
@@ -120,7 +120,7 @@ struct CalendarsSheetView: View {
       .disabled(viewModel.calendarsToDisplay.isEmpty)
       
       // Список календарей
-      Picker(selection: $selected, content: {
+      Picker(selection: $viewModel.pickedCalendarID, content: {
         ForEach(viewModel.calendarsToDisplay) { calendar in
           HStack(spacing: 10) {
             Circle()
@@ -153,7 +153,6 @@ struct CalendarCreationSheetView: View {
   var body: some View {
     NavigationStack {
       Form {
-        // TODO: Привязать значения к переменным
         TextField("Название", text: $newCalendarTitle, prompt: Text("Название"))
           .focused($calendarTitleFocus)
           .submitLabel(.done)
