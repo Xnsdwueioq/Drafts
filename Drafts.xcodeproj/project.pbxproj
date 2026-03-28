@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		B7C3F57F2F16D86300E15373 /* Test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Test.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7C3F57F2F16D86300E15373 /* Drafts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drafts.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B76F4B222F44D7F5008BE4F6 /* Exceptions for "Test" folder in "Test" target */ = {
+		B76F4B222F44D7F5008BE4F6 /* Exceptions for "Drafts" folder in "Drafts" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = B7C3F57E2F16D86300E15373 /* Test */;
+			target = B7C3F57E2F16D86300E15373 /* Drafts */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B7C3F5812F16D86300E15373 /* Test */ = {
+		B7C3F5812F16D86300E15373 /* Drafts */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B76F4B222F44D7F5008BE4F6 /* Exceptions for "Test" folder in "Test" target */,
+				B76F4B222F44D7F5008BE4F6 /* Exceptions for "Drafts" folder in "Drafts" target */,
 			);
-			path = Test;
+			path = Drafts;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -45,7 +45,7 @@
 		B7C3F5762F16D86300E15373 = {
 			isa = PBXGroup;
 			children = (
-				B7C3F5812F16D86300E15373 /* Test */,
+				B7C3F5812F16D86300E15373 /* Drafts */,
 				B7C3F5802F16D86300E15373 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -53,7 +53,7 @@
 		B7C3F5802F16D86300E15373 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B7C3F57F2F16D86300E15373 /* Test.app */,
+				B7C3F57F2F16D86300E15373 /* Drafts.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,9 +61,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B7C3F57E2F16D86300E15373 /* Test */ = {
+		B7C3F57E2F16D86300E15373 /* Drafts */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B7C3F58A2F16D86500E15373 /* Build configuration list for PBXNativeTarget "Test" */;
+			buildConfigurationList = B7C3F58A2F16D86500E15373 /* Build configuration list for PBXNativeTarget "Drafts" */;
 			buildPhases = (
 				B7C3F57B2F16D86300E15373 /* Sources */,
 				B7C3F57C2F16D86300E15373 /* Frameworks */,
@@ -74,13 +74,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B7C3F5812F16D86300E15373 /* Test */,
+				B7C3F5812F16D86300E15373 /* Drafts */,
 			);
-			name = Test;
+			name = Drafts;
 			packageProductDependencies = (
 			);
 			productName = Test;
-			productReference = B7C3F57F2F16D86300E15373 /* Test.app */;
+			productReference = B7C3F57F2F16D86300E15373 /* Drafts.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -98,7 +98,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B7C3F57A2F16D86300E15373 /* Build configuration list for PBXProject "Test" */;
+			buildConfigurationList = B7C3F57A2F16D86300E15373 /* Build configuration list for PBXProject "Drafts" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -112,7 +112,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B7C3F57E2F16D86300E15373 /* Test */,
+				B7C3F57E2F16D86300E15373 /* Drafts */,
 			);
 		};
 /* End PBXProject section */
@@ -270,6 +270,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Test/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Drafts;
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -281,7 +282,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sye7qjm3ac.Test;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sye7qjm3ac.drafts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -304,6 +305,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Test/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Drafts;
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -315,7 +317,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sye7qjm3ac.Test;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sye7qjm3ac.drafts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -330,7 +332,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B7C3F57A2F16D86300E15373 /* Build configuration list for PBXProject "Test" */ = {
+		B7C3F57A2F16D86300E15373 /* Build configuration list for PBXProject "Drafts" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B7C3F5882F16D86500E15373 /* Debug */,
@@ -339,7 +341,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B7C3F58A2F16D86500E15373 /* Build configuration list for PBXNativeTarget "Test" */ = {
+		B7C3F58A2F16D86500E15373 /* Build configuration list for PBXNativeTarget "Drafts" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B7C3F58B2F16D86500E15373 /* Debug */,

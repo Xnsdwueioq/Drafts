@@ -1,6 +1,6 @@
 //
 //  TabsView.swift
-//  Test
+//  Drafts
 //
 //  Created by Eyhciurmrn Zmpodackrl on 19.03.2026.
 //
