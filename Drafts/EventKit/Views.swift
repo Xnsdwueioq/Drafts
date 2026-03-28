@@ -53,10 +53,11 @@ struct EventView: View {
                 Spacer()
                 Circle()
                   .frame(width: 20, height: 20)
-                  .foregroundStyle(Color(cgColor: viewModel.selectedCalendarItem.color))
-                Text(viewModel.selectedCalendarItem.title)
+                  .foregroundStyle(viewModel.selectedCalendarColorView)
+                Text(viewModel.selectedCalendarTitleView)
               }
-              .animation(.easeInOut(duration: 0.3), value: viewModel.selectedCalendarItem.id)
+              .animation(.snappy, value: viewModel.selectedCalendarColorView)
+              .animation(.snappy, value: viewModel.selectedCalendarTitleView)
             })
             .tint(.primary)
           }
@@ -117,7 +118,7 @@ struct CalendarsSheetView: View {
         }
         .tint(.primary)
       })
-      .disabled(viewModel.calendarsToDisplay.isEmpty)
+      .disabled(!viewModel.hasFullAccess)
       
       // Список календарей
       Picker(selection: $viewModel.pickedCalendarID, content: {
@@ -133,10 +134,18 @@ struct CalendarsSheetView: View {
         }
       }, label: { EmptyView() })
       .pickerStyle(.inline)
+      .onChange(of: viewModel.pickedCalendarHash) {
+        viewModel.onHashChangeAction()
+      }
       
       // Заглушка при отсутствии доступа
-      if viewModel.calendarsToDisplay.isEmpty {
+      if !viewModel.hasFullAccess {
         ContentUnavailableView("Нет доступа", systemImage: "calendar.badge.exclamationmark", description: Text("Предоставьте полный доступ к Apple Calendar в настройках приложения"))
+      }
+      
+      // Заглушка при пустом списке
+      if viewModel.hasFullAccess && viewModel.calendarsToDisplay.isEmpty {
+        ContentUnavailableView("Список пуст", systemImage: "tray.fill", description: Text("Не найдено ни одного доступного календаря. Добавьте новый"))
       }
     }
   }

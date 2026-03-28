@@ -150,11 +150,11 @@ final class CalendarService {
     }
   }
   
-  func createCalendar(title: String, color: Color) {
+  func createCalendar(title: String, color: Color) -> String? {
     let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !trimmedTitle.isEmpty else {
         print("The calendar was not created. Invalid name: '\(title)'")
-        return
+        return nil
     }
     
     let calendar = EKCalendar(for: .event, eventStore: eventStore)
@@ -167,8 +167,10 @@ final class CalendarService {
       calendar.source = source
       try? eventStore.saveCalendar(calendar, commit: true)
       print("Calendar was created with title '\(calendar.title)', color '\(calendar.cgColor.debugDescription)', source '\(calendar.source.debugDescription)'")
+      return calendar.calendarIdentifier
     } else {
       print("Calendar was not created")
+      return nil
     }
   }
   
@@ -190,6 +192,10 @@ final class SettingsTabViewModel {
   private let eventKitManager: EventKitManager
   private let eventsService: EventsService
   private let calendarService: CalendarService
+  
+  var hasFullAccess: Bool {
+    eventKitManager.authrorizationStatus == .fullAccess
+  }
   
   var calendarsToDisplay: [CalendarItem] {
     calendarService.availableCalendars
@@ -259,10 +265,14 @@ final class SettingsTabViewModel {
   }
   
   func creationCalendarAction() {
-    calendarService.createCalendar(title: newCalendarTitle, color: newCalendarColor)
+    let createdCalendarId = calendarService.createCalendar(title: newCalendarTitle, color: newCalendarColor)
     isCalendarCreated = false
     isCalendarSelected = true
     resetNewCalendarData()
+    
+    if let createdCalendarId {
+      pickCalendar(with: createdCalendarId)
+    }
   }
   
   var isSynchronizeOn: Bool = false {
@@ -278,23 +288,62 @@ final class SettingsTabViewModel {
   
   // MARK: - Calendar Selection
   
-  var pickedCalendarID: String {
+  var pickedCalendarID: String? {
     get {
-      appSettings.selectedCalendar?.id ?? ""
+      appSettings.selectedCalendar?.id
     }
     set {
-      selectCalendar(with: newValue)
+      guard let newId = newValue else {
+        return
+      }
+      pickCalendar(with: newId)
     }
-  }
-  var selectedCalendarItem: CalendarItem {
-    guard let selectedCalendar = appSettings.selectedCalendar else {
-      return CalendarItem(from: calendarService.defaultCalendar!)
-    }
-    return selectedCalendar
   }
   
-  func selectCalendar(with id: String) {
-    let selectedCalendar = calendarService.findCalendar(with: id)
+  var pickedCalendarHash: Int {
+    guard let pickedID = pickedCalendarID,
+          let pickedEKCalendar = calendarService.findCalendar(with: pickedID)
+    else {
+      return 0
+    }
+    let pickedCalendar = CalendarItem(from: pickedEKCalendar)
+    
+    var hasher = Hasher()
+    hasher.combine(pickedCalendar.id)
+    hasher.combine(pickedCalendar.title)
+    hasher.combine(pickedCalendar.color)
+    hasher.combine(pickedCalendar.source.title)
+    let hash = hasher.finalize()
+    
+    return hash
+  }
+  
+  var selectedCalendarColorView: Color {
+    guard let selectedCalendar = appSettings.selectedCalendar else {
+      return Color.white
+    }
+    return Color(cgColor: selectedCalendar.color)
+  }
+  
+  var selectedCalendarTitleView: String {
+    guard let selectedCalendar = appSettings.selectedCalendar else {
+      return "Не выбран"
+    }
+    return selectedCalendar.title
+  }
+  
+  func onHashChangeAction() {
+    guard let currentId = pickedCalendarID else {
+      return
+    }
+    pickCalendar(with: currentId)
+  }
+  
+  private func pickCalendar(with id: String) {
+    guard let selectedCalendar = calendarService.findCalendar(with: id) else {
+      appSettings.selectedCalendar = nil
+      return
+    }
     appSettings.selectedCalendar = CalendarItem(from: selectedCalendar)
   }
   
