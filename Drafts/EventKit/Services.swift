@@ -308,11 +308,9 @@ final class SettingsTabViewModel {
     }
     let pickedCalendar = CalendarItem(from: pickedEKCalendar)
     
+    // Get calendar`s hash
     var hasher = Hasher()
-    hasher.combine(pickedCalendar.id)
-    hasher.combine(pickedCalendar.title)
-    hasher.combine(pickedCalendar.color)
-    hasher.combine(pickedCalendar.source.title)
+    pickedCalendar.hash(into: &hasher)
     let hash = hasher.finalize()
     
     return hash
@@ -392,7 +390,7 @@ final class SettingsTabViewModel {
   }
 }
 
-struct CalendarItem: Identifiable {
+struct CalendarItem: Identifiable, Hashable {
   let id: String
   let color: CGColor
   let title: String
@@ -403,5 +401,12 @@ struct CalendarItem: Identifiable {
     self.color = ekCalendar.cgColor
     self.title = ekCalendar.title
     self.source = ekCalendar.source
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(self.id)
+    hasher.combine(self.title)
+    hasher.combine(self.color)
+    hasher.combine(self.source.title)
   }
 }
