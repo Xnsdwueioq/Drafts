@@ -36,7 +36,7 @@ final class AppSettings {
   
   private init() {}
   
-  // связь с settingsManager через вычисляемые свойства
+  // TODO: связь с settingsManager через вычисляемые свойства
   var synchronizeCalendar: Bool = false
   var selectedCalendar: CalendarItem?
 }
@@ -181,6 +181,8 @@ final class CalendarService {
     
     return selectedCalendar
   }
+  
+  
 }
 
 // MARK: - Settings View Model
@@ -390,23 +392,41 @@ final class SettingsTabViewModel {
   }
 }
 
-struct CalendarItem: Identifiable, Hashable {
+struct CalendarItem: Identifiable, Hashable, Codable {
   let id: String
   let color: CGColor
   let title: String
-  let source: EKSource
+  let sourceTitle: String
   
   init(from ekCalendar: EKCalendar) {
     self.id = ekCalendar.calendarIdentifier
     self.color = ekCalendar.cgColor
     self.title = ekCalendar.title
-    self.source = ekCalendar.source
+    self.sourceTitle = ekCalendar.source.title
+  }
+  
+  enum CodingKeys: String, CodingKey {
+    case id
+    case color
+    case title
+    case sourceTitle
   }
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(self.id)
     hasher.combine(self.title)
     hasher.combine(self.color)
-    hasher.combine(self.source.title)
+    hasher.combine(self.sourceTitle)
+  }
+  
+  func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    let color = Color(cgColor: self.color)
+    //TODO: ENCODE AND DECODE OF COLOR
+    
+    try container.encode(self.id, forKey: .id)
+    try container.encode(color, forKey: .color)
+    try container.encode(self.title, forKey: .title)
+    try container.encode(self.sourceTitle, forKey: .sourceTitle)
   }
 }
