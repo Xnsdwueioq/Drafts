@@ -33,12 +33,32 @@ final class PeriodInterval {
 @Observable
 final class AppSettings {
   static let shared = AppSettings()
+  private let local = UserDefaults.standard
   
   private init() {}
   
   // TODO: связь с settingsManager через вычисляемые свойства
-  var synchronizeCalendar: Bool = false
-  var selectedCalendar: CalendarItem?
+  var synchronizeCalendar: Bool {
+    get {
+      local.bool(forKey: SettingKey.synchronizeCalendar.rawValue)
+    }
+    set {
+      local.set(Bool.self, forKey: SettingKey.synchronizeCalendar.rawValue)
+    }
+  }
+  var selectedCalendar: CalendarItem? {
+    get {
+      local.object(forKey: SettingKey.selectedCalendar.rawValue) as? CalendarItem
+    }
+    set {
+      local.set(CalendarItem.self, forKey: SettingKey.selectedCalendar.rawValue)
+    }
+  }
+  
+  enum SettingKey: String {
+    case synchronizeCalendar = "synchronize_calendar"
+    case selectedCalendar = "selected_calendar"
+  }
 }
 
 
@@ -405,6 +425,8 @@ struct CalendarItem: Identifiable, Hashable, Codable {
     self.sourceTitle = ekCalendar.source.title
   }
   
+  // MARK: - Encoding and Decoding
+  
   enum CodingKeys: String, CodingKey {
     case id
     case color
@@ -412,6 +434,29 @@ struct CalendarItem: Identifiable, Hashable, Codable {
     case sourceTitle
   }
   
+  init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    
+    self.id = try container.decode(String.self, forKey: .id)
+    
+    let codableCGColor = try container.decode(CodableCGColor.self, forKey: .color)
+    self.color = codableCGColor.cgColor
+    
+    self.title = try container.decode(String.self, forKey: .title)
+    self.sourceTitle = try container.decode(String.self, forKey: .sourceTitle)
+  }
+  
+  func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    let codableCGColor = CodableCGColor(from: self.color)
+    
+    try container.encode(self.id, forKey: .id)
+    try container.encode(codableCGColor, forKey: .color)
+    try container.encode(self.title, forKey: .title)
+    try container.encode(self.sourceTitle, forKey: .sourceTitle)
+  }
+  
+  // Hash function
   func hash(into hasher: inout Hasher) {
     hasher.combine(self.id)
     hasher.combine(self.title)
@@ -419,14 +464,23 @@ struct CalendarItem: Identifiable, Hashable, Codable {
     hasher.combine(self.sourceTitle)
   }
   
-  func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    let color = Color(cgColor: self.color)
-    //TODO: ENCODE AND DECODE OF COLOR
+  // Structure for encoding CGColor
+  struct CodableCGColor: Codable {
+    let red: CGFloat
+    let green: CGFloat
+    let blue: CGFloat
+    let alpha: CGFloat
     
-    try container.encode(self.id, forKey: .id)
-    try container.encode(color, forKey: .color)
-    try container.encode(self.title, forKey: .title)
-    try container.encode(self.sourceTitle, forKey: .sourceTitle)
+    init(from color: CGColor) {
+      let components = color.components ?? [0, 0, 0, 0]
+      self.red = components[0]
+      self.green = components[1]
+      self.blue = components[2]
+      self.alpha = components[3]
+    }
+    
+    var cgColor: CGColor {
+      CGColor(red: red, green: green, blue: blue, alpha: alpha)
+    }
   }
 }
