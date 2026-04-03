@@ -23,6 +23,21 @@ struct EventViewContainer: View {
   
   var body: some View {
     EventView(viewModel: viewModel)
+      .onAppear {
+        viewModel.checkAuthorisationStatus()
+      }
+      .alert("Нет доступа к календарю",
+             isPresented: $viewModel.isAlertPresent,
+             actions: {
+        Button("Перейти в настройки", role: .confirm) {
+          Task {
+            await viewModel.openSettings()
+          }
+        }
+        Button("Ок", role: .close) { }
+      },
+             message: { Text("Перейдите в настройки и разрешите полный доступ") }
+      )
   }
 }
 
@@ -68,18 +83,6 @@ struct EventView: View {
       }
       .animation(.snappy, value: viewModel.isSynchronizeOn)
     }
-    .alert("Нет доступа к календарю",
-           isPresented: $viewModel.isAlertPresent,
-           actions: {
-      Button("Перейти в настройки", role: .confirm) {
-        Task {
-          await viewModel.openSettings()
-        }
-      }
-      Button("Ок", role: .close) { }
-    },
-           message: { Text("Перейдите в настройки и разрешите полный доступ") }
-    )
     .sheet(
       isPresented: $viewModel.isCalendarSelected,
       onDismiss: viewModel.onDismissCalendarSelected

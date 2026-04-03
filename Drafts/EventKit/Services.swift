@@ -265,6 +265,14 @@ final class SettingsTabViewModel {
   var startTime: Date = Date()
   var endTime: Date = Date().advanced(by: 3600)
   
+  func checkAuthorisationStatus() {
+    print("[SettingsTabViewModel][checkAuthorizationStatus] was called")
+    if isSynchronizeOn && !hasFullAccess {
+      isSynchronizeOn = false
+      isAlertPresent = true
+    }
+  }
+  
   // MARK: - Additional Screens Logic
   
   var isAlertPresent = false
