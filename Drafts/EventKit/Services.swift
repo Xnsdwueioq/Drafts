@@ -43,15 +43,31 @@ final class AppSettings {
       local.bool(forKey: SettingKey.synchronizeCalendar.rawValue)
     }
     set {
-      local.set(Bool.self, forKey: SettingKey.synchronizeCalendar.rawValue)
+      local.set(newValue, forKey: SettingKey.synchronizeCalendar.rawValue)
     }
   }
   var selectedCalendar: CalendarItem? {
     get {
-      local.object(forKey: SettingKey.selectedCalendar.rawValue) as? CalendarItem
+      guard let data = local.data(forKey: SettingKey.selectedCalendar.rawValue) else {
+        print("'selectedCalendar' getter: no data found in UserDefaults")
+        return nil
+      }
+      
+      let decoder = JSONDecoder()
+      do {
+        return try decoder.decode(CalendarItem.self, from: data)
+      } catch {
+        print("Decoding error: \(error.localizedDescription)")
+        return nil
+      }
     }
     set {
-      local.set(CalendarItem.self, forKey: SettingKey.selectedCalendar.rawValue)
+      let encoder = JSONEncoder()
+      if let data = try? encoder.encode(newValue) {
+        local.set(data, forKey: SettingKey.selectedCalendar.rawValue)
+      } else {
+        local.removeObject(forKey: SettingKey.selectedCalendar.rawValue)
+      }
     }
   }
   
@@ -361,6 +377,7 @@ final class SettingsTabViewModel {
   
   private func pickCalendar(with id: String) {
     guard let selectedCalendar = calendarService.findCalendar(with: id) else {
+      print("Can't select a calendar because it can't be found by calendarIdentifier via the CalendarService. AppSettings.selectedCalendar became equal to nil.")
       appSettings.selectedCalendar = nil
       return
     }
