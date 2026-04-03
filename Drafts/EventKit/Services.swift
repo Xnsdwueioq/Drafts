@@ -35,24 +35,13 @@ final class AppSettings {
   static let shared = AppSettings()
   private let local = UserDefaults.standard
   
-  private init() {}
-  
-  // TODO: связь с settingsManager через вычисляемые свойства
-  var synchronizeCalendar: Bool {
-    get {
-      local.bool(forKey: SettingKey.synchronizeCalendar.rawValue)
-    }
-    set {
-      local.set(newValue, forKey: SettingKey.synchronizeCalendar.rawValue)
-    }
-  }
-  var selectedCalendar: CalendarItem? {
-    get {
+  private init() {
+    self.synchronizeCalendar = local.bool(forKey: SettingKey.synchronizeCalendar.rawValue)
+    self.selectedCalendar = {
       guard let data = local.data(forKey: SettingKey.selectedCalendar.rawValue) else {
         print("'selectedCalendar' getter: no data found in UserDefaults")
         return nil
       }
-      
       let decoder = JSONDecoder()
       do {
         return try decoder.decode(CalendarItem.self, from: data)
@@ -60,10 +49,19 @@ final class AppSettings {
         print("Decoding error: \(error.localizedDescription)")
         return nil
       }
+    }()
+  }
+  
+  // TODO: связь с settingsManager через вычисляемые свойства
+  var synchronizeCalendar: Bool {
+    didSet {
+      local.set(synchronizeCalendar, forKey: SettingKey.synchronizeCalendar.rawValue)
     }
-    set {
+  }
+  var selectedCalendar: CalendarItem? {
+    didSet {
       let encoder = JSONEncoder()
-      if let data = try? encoder.encode(newValue) {
+      if let data = try? encoder.encode(selectedCalendar) {
         local.set(data, forKey: SettingKey.selectedCalendar.rawValue)
       } else {
         local.removeObject(forKey: SettingKey.selectedCalendar.rawValue)
@@ -107,13 +105,16 @@ final class EventsService {
     self.eventStore = eventStore
   }
   
-  func addEvent(event name: String, with startTime: Date, and endTime: Date) {
+  func addEvent(event name: String, start startDate: Date, end endDate: Date, calendar calendarItem: CalendarItem) {
+    guard let calendar = eventStore.calendar(withIdentifier: calendarItem.id) else {
+      print("The event wasn not added. Could not find EKCalendar by identifier from CalendarItem")
+      return
+    }
     let event = EKEvent(eventStore: self.eventStore)
     event.title = name
-    event.startDate = startTime
-    event.endDate = endTime
-    event.calendar = self.eventStore.defaultCalendarForNewEvents
-    
+    event.startDate = startDate
+    event.endDate = endDate
+    event.calendar = calendar
     do {
       try self.eventStore.save(event, span: .thisEvent)
     } catch {
@@ -420,11 +421,15 @@ final class SettingsTabViewModel {
       self.isSynchronizeOn = false
     }
   }
-    
-  // TODO: Fix event addition
+      
   func addEvenButton() {
     if appSettings.synchronizeCalendar {
-      eventsService.addEvent(event: "Test", with: startTime, and: endTime)
+      guard let calendar = appSettings.selectedCalendar else {
+        print("Event was not added. 'selectedCalendar' property equals nil")
+        return
+      }
+      // DEBUG function
+      eventsService.addEvent(event: "Test", start: startTime, end: endTime, calendar: calendar)
     }
   }
 }
