@@ -60,6 +60,9 @@ struct EventView: View {
               .animation(.snappy, value: viewModel.selectedCalendarTitleView)
             })
             .tint(.primary)
+            .onChange(of: viewModel.calendarsToDisplay) {
+              viewModel.onCalendarsChangedAction()
+            }
           }
         }
       }
@@ -134,9 +137,6 @@ struct CalendarsSheetView: View {
         }
       }, label: { EmptyView() })
       .pickerStyle(.inline)
-      .onChange(of: viewModel.pickedCalendarHash) {
-        viewModel.onHashChangeAction()
-      }
       
       // Заглушка при отсутствии доступа
       if !viewModel.hasFullAccess {

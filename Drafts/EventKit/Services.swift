@@ -36,10 +36,10 @@ final class AppSettings {
   private let local = UserDefaults.standard
   
   private init() {
-    self.synchronizeCalendar = local.bool(forKey: SettingKey.synchronizeCalendar.rawValue)
-    self.selectedCalendar = {
+    self._synchronizeCalendar = local.bool(forKey: SettingKey.synchronizeCalendar.rawValue)
+    self._selectedCalendar = {
       guard let data = local.data(forKey: SettingKey.selectedCalendar.rawValue) else {
-        print("'selectedCalendar' getter: no data found in UserDefaults")
+        print("No data found in UserDefaults for 'selected_calendar' key")
         return nil
       }
       let decoder = JSONDecoder()
@@ -60,6 +60,11 @@ final class AppSettings {
   }
   var selectedCalendar: CalendarItem? {
     didSet {
+      print("[AppSettings][selectedCalendar] didSet was called \(Date())")
+      guard oldValue != selectedCalendar else {
+        print("[AppSettings][selectedCalendar] selected calendar has not changed. Exiting didSet closure")
+        return
+      }
       let encoder = JSONEncoder()
       if let data = try? encoder.encode(selectedCalendar) {
         local.set(data, forKey: SettingKey.selectedCalendar.rawValue)
@@ -171,6 +176,7 @@ final class CalendarService {
   }
   
   func fetchAvailableCalendars() {
+    print("fetchAvailableCalendars was called")
     let rawCalendars = getAllowModificationsCalendars()
     let calendars = rawCalendars.map { CalendarItem(from: $0) }
     
@@ -219,7 +225,6 @@ final class CalendarService {
     return selectedCalendar
   }
   
-  
 }
 
 // MARK: - Settings View Model
@@ -252,6 +257,8 @@ final class SettingsTabViewModel {
     self.calendarService = calendarService
     
     self._isSynchronizeOn = appSettings.synchronizeCalendar
+    
+    repickCalendar()
   }
   
   // DEBUG
@@ -264,7 +271,9 @@ final class SettingsTabViewModel {
   
   var isCalendarSelected = false
   func onDismissCalendarSelected() {
-    
+    if appSettings.selectedCalendar == nil {
+      isSynchronizeOn = false
+    }
   }
   
   var isCalendarCreated = false
@@ -332,32 +341,17 @@ final class SettingsTabViewModel {
       appSettings.selectedCalendar?.id
     }
     set {
-      guard let newId = newValue else {
+      guard let newId = newValue,
+            newId != appSettings.selectedCalendar?.id else {
         return
       }
       pickCalendar(with: newId)
     }
   }
   
-  var pickedCalendarHash: Int {
-    guard let pickedID = pickedCalendarID,
-          let pickedEKCalendar = calendarService.findCalendar(with: pickedID)
-    else {
-      return 0
-    }
-    let pickedCalendar = CalendarItem(from: pickedEKCalendar)
-    
-    // Get calendar`s hash
-    var hasher = Hasher()
-    pickedCalendar.hash(into: &hasher)
-    let hash = hasher.finalize()
-    
-    return hash
-  }
-  
   var selectedCalendarColorView: Color {
     guard let selectedCalendar = appSettings.selectedCalendar else {
-      return Color.white
+      return Color.white.opacity(0)
     }
     return Color(cgColor: selectedCalendar.color)
   }
@@ -369,7 +363,22 @@ final class SettingsTabViewModel {
     return selectedCalendar.title
   }
   
-  func onHashChangeAction() {
+  func onCalendarsChangedAction() {
+    print("[SettingsTabViewModel][onCalendarsChangedAction] was called")
+    guard let pickedCalendarID,
+          let selectedEKCalendarActual = calendarService.findCalendar(with: pickedCalendarID),
+          let selectedCalendar = appSettings.selectedCalendar else {
+      return
+    }
+    
+    let selectedCalendarActual = CalendarItem(from: selectedEKCalendarActual)
+    if selectedCalendarActual.hashValue != selectedCalendar.hashValue {
+      repickCalendar()
+    }
+  }
+  
+  func repickCalendar() {
+    print("[SettingsTabViewModel][repickCalendar] was called")
     guard let currentId = pickedCalendarID else {
       return
     }
@@ -377,6 +386,7 @@ final class SettingsTabViewModel {
   }
   
   private func pickCalendar(with id: String) {
+    print("[SettingsTabViewModel][pickCalendar] was called")
     guard let selectedCalendar = calendarService.findCalendar(with: id) else {
       print("Can't select a calendar because it can't be found by calendarIdentifier via the CalendarService. AppSettings.selectedCalendar became equal to nil.")
       appSettings.selectedCalendar = nil
