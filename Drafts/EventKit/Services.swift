@@ -405,6 +405,9 @@ final class SettingsTabViewModel {
     switch status {
     case .fullAccess:
       appSettings.synchronizeCalendar = true
+      if appSettings.selectedCalendar == nil {
+        isCalendarSelected = true
+      }
       
     case .notDetermined:
       Task {
