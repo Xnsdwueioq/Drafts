@@ -21,7 +21,7 @@ struct MockApp: View {
   
   var body: some View {
     // Mock WindowGroup { }
-    EventViewContainer(
+    CalendarSyncContainer(
       eventsService: eventsService,
       calendarService: calendarService
     )
