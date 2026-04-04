@@ -38,6 +38,14 @@ struct EventViewContainer: View {
       },
              message: { Text("Перейдите в настройки и разрешите полный доступ") }
       )
+      .alert("Календарь не выбран",
+             isPresented: $viewModel.isCalendarNilPresent,
+             actions: {
+        Button("Выбрать календарь", role: .confirm) { viewModel.openCalendarSelectionSheet() }
+        Button("Выключить синхронизацию", role: .cancel) { viewModel.isSynchronizeOn = false }
+      },
+             message: { Text("Выберите новый календарь для возможности синхронизации с Apple Calendar") }
+      )
   }
 }
 

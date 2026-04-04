@@ -259,6 +259,7 @@ final class SettingsTabViewModel {
     self._isSynchronizeOn = appSettings.synchronizeCalendar
     
     repickCalendar()
+    processNilCalendar()
   }
   
   // DEBUG
@@ -273,18 +274,32 @@ final class SettingsTabViewModel {
     }
   }
   
+  func processNilCalendar() {
+    if isSynchronizeOn && appSettings.selectedCalendar == nil {
+      isCalendarNilPresent = true
+    }
+  }
+  
   // MARK: - Additional Screens Logic
   
   var isAlertPresent = false
   
+  var isCalendarNilPresent = false
+  
   var isCalendarSelected = false
+  
   func onDismissCalendarSelected() {
-    if appSettings.selectedCalendar == nil {
+    if !isCalendarCreated && appSettings.selectedCalendar == nil {
       isSynchronizeOn = false
     }
   }
   
+  func openCalendarSelectionSheet() {
+    isCalendarSelected = true
+  }
+  
   var isCalendarCreated = false
+  
   func onDismissCalendarCreated() {
     isCalendarSelected = true
   }
@@ -398,6 +413,8 @@ final class SettingsTabViewModel {
     guard let selectedCalendar = calendarService.findCalendar(with: id) else {
       print("Can't select a calendar because it can't be found by calendarIdentifier via the CalendarService. AppSettings.selectedCalendar became equal to nil.")
       appSettings.selectedCalendar = nil
+      processNilCalendar()
+
       return
     }
     appSettings.selectedCalendar = CalendarItem(from: selectedCalendar)
