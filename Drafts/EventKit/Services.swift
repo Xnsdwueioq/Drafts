@@ -275,7 +275,7 @@ final class SettingsTabViewModel {
   }
   
   func processNilCalendar() {
-    if isSynchronizeOn && appSettings.selectedCalendar == nil {
+    if isSynchronizeOn && hasFullAccess && appSettings.selectedCalendar == nil {
       isCalendarNilPresent = true
     }
   }
