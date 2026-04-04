@@ -60,7 +60,7 @@ struct EventView: View {
           DatePicker("End Date", selection: $viewModel.endTime)
           
           Button("Add Event") {
-            viewModel.addEvenButton()
+            viewModel.addEventAction()
           }
         }
         

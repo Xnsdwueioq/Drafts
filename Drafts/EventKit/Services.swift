@@ -413,6 +413,7 @@ final class SettingsTabViewModel {
     guard let selectedCalendar = calendarService.findCalendar(with: id) else {
       print("Can't select a calendar because it can't be found by calendarIdentifier via the CalendarService. AppSettings.selectedCalendar became equal to nil.")
       appSettings.selectedCalendar = nil
+      
       processNilCalendar()
 
       return
@@ -460,7 +461,7 @@ final class SettingsTabViewModel {
     }
   }
       
-  func addEvenButton() {
+  func addEventAction() {
     if appSettings.synchronizeCalendar {
       guard let calendar = appSettings.selectedCalendar else {
         print("Event was not added. 'selectedCalendar' property equals nil")
