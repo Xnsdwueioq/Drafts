@@ -41,8 +41,8 @@ struct EventViewContainer: View {
       .alert("Календарь не выбран",
              isPresented: $viewModel.isCalendarNilPresent,
              actions: {
-        Button("Выбрать календарь", role: .confirm) { viewModel.openCalendarSelectionSheet() }
-        Button("Выключить синхронизацию", role: .cancel) { viewModel.isSynchronizeOn = false }
+        Button("Выбрать календарь", role: .cancel) { viewModel.openCalendarSelectionSheet() }
+        Button("Выключить синхронизацию", role: .destructive) { viewModel.isSynchronizeOn = false }
       },
              message: { Text("Выберите новый календарь для возможности синхронизации с Apple Calendar") }
       )
