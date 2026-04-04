@@ -465,6 +465,8 @@ final class SettingsTabViewModel {
     if appSettings.synchronizeCalendar {
       guard let calendar = appSettings.selectedCalendar else {
         print("Event was not added. 'selectedCalendar' property equals nil")
+        processNilCalendar()
+        
         return
       }
       // DEBUG function
