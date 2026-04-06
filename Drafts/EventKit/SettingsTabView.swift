@@ -1,5 +1,5 @@
 //
-//  TabsView.swift
+//  SettingsTabView.swift
 //  Drafts
 //
 //  Created by Eyhciurmrn Zmpodackrl on 19.03.2026.
@@ -7,11 +7,13 @@
 
 import SwiftUI
 
-struct MockApp: View {
+struct SettingsTabView: View {
   // MARK: - Composition Root
   @State private var eventKitManager: EventKitManager
+  
   @State private var eventsService: EventsService
   @State private var calendarService: CalendarService
+
   
   init(manager: EventKitManager = EventKitManager.shared) {
     self.eventKitManager = manager
@@ -20,7 +22,6 @@ struct MockApp: View {
   }
   
   var body: some View {
-    // Mock WindowGroup { }
     CalendarSyncContainer(
       eventsService: eventsService,
       calendarService: calendarService
@@ -31,5 +32,5 @@ struct MockApp: View {
 }
 
 #Preview {
-  MockApp()
+  SettingsTabView()
 }
