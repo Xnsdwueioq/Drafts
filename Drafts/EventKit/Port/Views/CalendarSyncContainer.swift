@@ -12,11 +12,11 @@ struct CalendarSyncContainer: View {
   @State private var viewModel: CalendarSyncViewModel
   
   init(
-    eventsService: EventsService,
+//    eventsService: EventsService,
     calendarService: CalendarService
   ) {
     self._viewModel = State(initialValue: CalendarSyncViewModel(
-      eventsService: eventsService,
+//      eventsService: eventsService,
       calendarService: calendarService
     ))
   }

@@ -15,7 +15,7 @@ final class CalendarSyncViewModel {
   private let appSettings: AppSettings
   
   private let eventKitManager: EventKitManager
-  private let eventsService: EventsService
+//  private let eventsService: EventsService
   private let calendarService: CalendarService
   
   var hasFullAccess: Bool {
@@ -29,12 +29,12 @@ final class CalendarSyncViewModel {
   init(
     appSettings: AppSettings = AppSettings.shared,
     eventKitManager: EventKitManager = EventKitManager.shared,
-    eventsService: EventsService,
+//    eventsService: EventsService,
     calendarService: CalendarService
   ) {
     self.appSettings = appSettings
     self.eventKitManager = eventKitManager
-    self.eventsService = eventsService
+//    self.eventsService = eventsService
     self.calendarService = calendarService
     
     self._isSynchronizeOn = appSettings.synchronizeCalendar
@@ -242,16 +242,16 @@ final class CalendarSyncViewModel {
     }
   }
       
-  func addEventAction() {
-    if appSettings.synchronizeCalendar {
-      guard let calendar = appSettings.selectedCalendar else {
-        print("Event was not added. 'selectedCalendar' property equals nil")
-        processNilCalendar()
-        
-        return
-      }
-      // DEBUG function
-      eventsService.addEvent(event: "Test", start: startTime, end: endTime, calendar: calendar)
-    }
-  }
+//  func addEventAction() {
+//    if appSettings.synchronizeCalendar {
+//      guard let calendar = appSettings.selectedCalendar else {
+//        print("Event was not added. 'selectedCalendar' property equals nil")
+//        processNilCalendar()
+//        
+//        return
+//      }
+//      // DEBUG function
+//      eventsService.addEvent(event: "Test", start: startTime, end: endTime, calendar: calendar)
+//    }
+//  }
 }
