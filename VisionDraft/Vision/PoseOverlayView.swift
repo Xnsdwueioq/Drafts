@@ -1,6 +1,6 @@
 //
 //  PoseOverlayView.swift
-//  Drafts
+//  VisionDraft
 //
 //  Created by Eyhciurmrn Zmpodackrl on 07.04.2026.
 //
@@ -19,7 +19,7 @@ struct PoseOverlayView: View {
         
         let dotRadius: CGFloat = 4
         let dot = Path(ellipseIn: CGRect(x: x - dotRadius, y: y - dotRadius, width: dotRadius * 2, height: dotRadius * 2))
-        context.fill(dot, with: .color(.teal))
+        context.fill(dot, with: .color(.red))
       }
     }
   }

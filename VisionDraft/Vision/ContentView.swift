@@ -1,11 +1,12 @@
 //
 //  ContentView.swift
-//  Drafts
+//  VisionDraft
 //
-//  Created by Eyhciurmrn Zmpodackrl on 07.04.2026.
+//  Created by Eyhciurmrn Zmpodackrl on 08.04.2026.
 //
 
 import SwiftUI
+import UIKit
 
 struct ContentView: View {
   @State private var detector = PoseDetector()
@@ -21,7 +22,11 @@ struct ContentView: View {
             .scaledToFit()
             .overlay {
               GeometryReader { geometry in
-                PoseOverlayView(points: detector.detectedPoints, size: geometry.size)
+                PoseOverlayView(points: detector.detectedPoints, size: {
+                  print(geometry.size.debugDescription)
+                  return geometry.size
+                }()
+                )
               }
             }
         }
